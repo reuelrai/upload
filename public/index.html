@@ -23,7 +23,7 @@
             const formData = new FormData(form);
 
             try {
-                const response = await fetch('http://localhost:3000/upload', {
+                const response = await fetch('https://upload-gold-nine.vercel.app/', {
                     method: 'POST',
                     body: formData,
                 });
