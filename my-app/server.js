@@ -37,6 +37,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+
 // File upload handling using Cloudinary
 app.post('/upload', upload.single('photo'), async (req, res) => {
     const { name } = req.body;  // Get the name from the form
@@ -82,3 +83,17 @@ app.use(cors({
 app.listen(3000, () => {
     console.log('Server running on http://localhost:3000');
 });
+
+const fetch = require('node-fetch');
+
+app.post('/upload', async (req, res) => {
+  const formData = req.body;
+  const response = await fetch('https://upload-gold-nine.vercel.app/', {
+    method: 'POST',
+    body: formData,
+  });
+  
+  const data = await response.json();
+  res.json(data);
+});
+
