@@ -75,7 +75,7 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
 
 // CORS Configuration
 app.use(cors({
-    origin: 'https://upload-gold-nine.vercel.app/', // Allows all origins (not recommended for production)
+    origin: 'https://upload-10irw505b-reuel-rais-projects.vercel.app', // Allows all origins (not recommended for production)
 }));
 
 // Start the server
