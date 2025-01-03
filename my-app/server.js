@@ -73,6 +73,11 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
     }
 });
 
+// CORS Configuration
+app.use(cors({
+    origin: '*', // Allows all origins (not recommended for production)
+}));
+
 // Start the server
 app.listen(3000, () => {
     console.log('Server running on http://localhost:3000');
