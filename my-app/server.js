@@ -1,76 +1,68 @@
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
-const mongoose = require('mongoose');
+const multer = require('multer');
 const cors = require('cors');
+const path = require('path');  // To resolve file paths
+
 const app = express();
-
-// Cloudinary configuration
-cloudinary.config({
-  cloud_name: 'da0nmpqmn',      // Replace with your cloud name
-  api_key: '748779583948967',           // Replace with your API key
-  api_secret: 'ItwM-YTQVuSJtr-Sj_gd1auYJqk',     // Replace with your API secret
-});
-
-// MongoDB connection
-mongoose.connect('mongodb://localhost:27017/photoDB')
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((err) => console.error('MongoDB connection error:', err));
-
-// Define a Mongoose schema for photo data
-const photoSchema = new mongoose.Schema({
-    name: String,
-    filename: String,
-    uploadDate: { type: Date, default: Date.now },
-});
-
-// Create a model based on the schema
-const Photo = mongoose.model('Photo', photoSchema);
-
-// Set up file storage with Multer (we don't need to store files locally anymore)
-const storage = multer.memoryStorage();  // Store images in memory temporarily
-const upload = multer({ storage: storage });
-
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
 
-// File upload handling using Cloudinary
+// Serve static files from the 'public' folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Supabase configuration
+const supabase = createClient(
+    'https://gverjivsdovotdwirzme.supabase.co', // Replace with your Supabase URL
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2ZXJqaXZzZG92b3Rkd2lyem1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUzMDYxNjcsImV4cCI6MjA1MDg4MjE2N30.uYT7wfg2A6kCufXxvCtMlbLTWES_fLKdt4JzRlE7VKs' // Replace with your Supabase anon key
+);
+
+// Set up Multer for in-memory file storage
+const upload = multer({ storage: multer.memoryStorage() });
+
+// File upload endpoint
 app.post('/upload', upload.single('photo'), async (req, res) => {
-    const { name } = req.body;  // Get the name from the form
+    const { name } = req.body;
+
     if (req.file && name) {
         try {
-            // Upload file to Cloudinary
-            cloudinary.uploader.upload_stream((error, result) => {
-                if (error) {
-                    return res.status(500).json({ success: false, message: 'Error uploading to Cloudinary', error });
-                }
-
-                // Save photo information to MongoDB
-                const newPhoto = new Photo({
-                    name: name,
-                    filename: result.secure_url,  // Save Cloudinary URL
+            const fileName = `${Date.now()}-${req.file.originalname}`;
+            const { data, error } = await supabase.storage
+                .from('photos')  // Replace with your Supabase bucket name
+                .upload(fileName, req.file.buffer, {
+                    contentType: req.file.mimetype,
+                    upsert: false,
                 });
 
-                newPhoto.save()
-                    .then(() => {
-                        console.log(`File uploaded by ${name}: ${result.secure_url}`);
-                        res.json({ success: true, filename: result.secure_url, name: name });
-                    })
-                    .catch((err) => {
-                        console.error('Error saving to DB:', err);
-                        res.status(500).json({ success: false, message: 'Database error' });
-                    });
-            }).end(req.file.buffer);  // Upload the file buffer to Cloudinary
-        } catch (error) {
-            console.error('Error uploading to Cloudinary:', error);
-            res.status(500).json({ success: false, message: 'Error uploading to Cloudinary', error });
+            if (error) {
+                throw error;
+            }
+
+            // File uploaded successfully, now save the user name and file info in the database
+            const { data: dbData, error: dbError } = await supabase
+                .from('photos')
+                .insert([{
+                    name: name,
+                    url: fileName,  // Save the file name instead of the URL
+                }]);
+
+            if (dbError) {
+                throw dbError;
+            }
+
+            res.json({ success: true, message: 'File uploaded successfully', name });
+        } catch (err) {
+            console.error('Error:', err);
+            res.status(500).json({ success: false, message: err.message });
         }
     } else {
-        res.status(400).json({ success: false, message: 'No file uploaded or name missing' });
+        res.status(400).json({ success: false, message: 'Missing file or name' });
     }
+});
+
+// Default route to serve the index.html file
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));  // Ensure correct path to index.html
 });
 
 // Start the server
