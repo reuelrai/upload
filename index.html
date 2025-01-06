@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Photo</title>
+</head>
+
+<body>
+    <h1>Upload Your Photo</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="photo">Choose a photo:</label>
+        <input type="file" id="photo" name="photo" accept="image/*" required><br><br>
+        <button type="submit">Upload</button>
+    </form>
+    
+
+    <script>
+        const form = document.getElementById('uploadForm');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('http://localhost:3000/upload', {
+                    // Update with your backend URL
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log("Backend response:", result); // Log the response for debugging
+
+                if (result.success) {
+                    alert(`Photo uploaded successfully! Uploaded by: ${result.name}`);
+                } else {
+                    alert(`Failed to upload photo: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                alert('Unexpected error occurred!');
+            }
+        });
+
+
+    </script>
+
+</body>
+
+</html>

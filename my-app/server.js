@@ -69,3 +69,52 @@ app.get('/', (req, res) => {
 app.listen(3000, () => {
     console.log('Server running on http://localhost:3000');
 });
+
+const cors = require('cors');
+
+app.use(cors({
+    origin: 'https://photo-upload-veight.vercel.app', // Replace with your frontend's origin
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+const allowedOrigins = [
+    'https://new2-4cicbgnxb-reuel-rais-projects.vercel.app',
+    'https://photo-upload-veight.vercel.app',
+    'http://localhost:3000' // Add any other allowed origins
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+
+export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', 'https://photo-upload-veight.vercel.app'); // Replace with your frontend's origin
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
+    // Your function logic here
+}
+
+const cors = require('cors');
+
+app.use(cors({
+    origin: 'https://new2-4cicbgnxb-reuel-rais-projects.vercel.app', // Allow your frontend's new URL
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
