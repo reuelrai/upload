@@ -26,7 +26,7 @@
             const formData = new FormData(form);
 
             try {
-                const response = await fetch('https://gverjivsdovotdwirzme.supabase.co/upload', {
+                const response = await fetch('https://gverjivsdovotdwirzme.supabase.co/storage/v1/s3/upload', {
                     // Update with your backend URL
                     method: 'POST',
                     body: formData,
