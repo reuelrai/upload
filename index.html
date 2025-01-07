@@ -19,10 +19,10 @@
     </form>
 
     <script>
-        const SUPABASE_URL = 'https://your-supabase-url.supabase.co'; // Replace with your Supabase URL
+        const SUPABASE_URL = 'https://gverjivsdovotdwirzme.supabase.co'; // Replace with your Supabase URL
         const SUPABASE_ANON_KEY = 'your-anon-key'; // Replace with your Supabase anon key
 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = supabase.createClient('https://gverjivsdovotdwirzme.supabase.co', SUPABASE_ANON_KEY);
         const form = document.getElementById('uploadForm');
 
         form.addEventListener('submit', async (e) => {
