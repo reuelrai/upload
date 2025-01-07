@@ -20,9 +20,9 @@
 
     <script>
         const SUPABASE_URL = 'https://gverjivsdovotdwirzme.supabase.co'; // Replace with your Supabase URL
-        const SUPABASE_ANON_KEY = 'your-anon-key'; // Replace with your Supabase anon key
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2ZXJqaXZzZG92b3Rkd2lyem1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUzMDYxNjcsImV4cCI6MjA1MDg4MjE2N30.uYT7wfg2A6kCufXxvCtMlbLTWES_fLKdt4JzRlE7VKs'; // Replace with your Supabase anon key
 
-        const supabase = supabase.createClient('https://gverjivsdovotdwirzme.supabase.co', SUPABASE_ANON_KEY);
+        const supabase = supabase.createClient('https://gverjivsdovotdwirzme.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2ZXJqaXZzZG92b3Rkd2lyem1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzUzMDYxNjcsImV4cCI6MjA1MDg4MjE2N30.uYT7wfg2A6kCufXxvCtMlbLTWES_fLKdt4JzRlE7VKs');
         const form = document.getElementById('uploadForm');
 
         form.addEventListener('submit', async (e) => {
